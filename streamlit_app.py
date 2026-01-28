@@ -1,55 +1,73 @@
 import streamlit as st
+import numpy as np
+import math
 
-st.image("./img/neurona.jpg", width=500)
-st.markdown("## ¡Hola neurona!")
+# Cabecera 
+st.image("img/neurona.jpg", width=360)
+st.header("Simulador de neurona")
 
-tab1, tab2, tab3 = st.tabs(["Una entrada", "Dos entradas", "Tres entradas y sesgo"])
+# Definición de la clase Neuron
+class Neuron:
+  FUNCIONES = {
+        "sigmoid": lambda x: 1.0 / (1.0 + np.exp(-x)),
+        "tanh": np.tanh,
+        "relu": lambda x: np.maximum(0.0, x),
+    }
 
-with tab1:
-    st.markdown("## Una neurona con una entrada y un peso")
+  def __init__(self, weights, bias, func):
+    self.weights = np.array(weights, dtype=float)
+    self.bias = float(bias)
+    self.func = str(func)
 
-    w = st.slider("Peso", 0.0, 5.0, 0.0, 0.01, key="w_tab1")
-    x = st.number_input("Introduzca el valor de la entrada", key="x_tab1")
+  def run(self, input_data):
+    y = np.dot(np.array(input_data, dtype=float), self.weights) + self.bias
+    result = self.FUNCIONES.get(self.func)
+    return result(y)
 
-    y1 = x * w
+  def changeBias(self, n):
+    self.bias = n
 
-    if st.button("Calcular la salida", key="b_tab1"):
-        st.write(f"La salida de la neurona es {y1}")
+  def changeWeights(self, n):
+    self.weights = n
 
-with tab2:
-    col1, col2 = st.columns(2)
+# Nº de pesos y entradas 
+number_of_inputs = st.slider("Elige el número de entradas/pesos que tendrá la neurona", 1, 10)
 
-    with col1:
-        w0 = st.slider("Peso w0", 0.0, 5.0, 0.0, 0.01, key="w0_tab2")
-        x0 = st.number_input("Entrada x0", key="x0_tab2")
+# Pesos
+st.subheader("Pesos")
+w = []
+colw = st.columns(number_of_inputs)
+for i in range(number_of_inputs):
+    with colw[i]:
+        w_i = st.number_input(label=f"w{i}", value=0.0, step=0.1, key=f"w_{i}",)
+        w.append(w_i)
+st.text(f"w = {w}")
 
-    with col2:
-        w1 = st.slider("Peso w1", 0.0, 5.0, 0.0, 0.01, key="w1_tab2")
-        x1 = st.number_input("Entrada x1", key="x1_tab2")  
+# Entradas
+st.subheader("Entradas")
+x = []
+colx = st.columns(number_of_inputs)
+for i in range(number_of_inputs):
+    with colx[i]:
+        x_i = st.number_input(label=f"x{i}", value=0.0, step=0.1, key=f"x_{i}",)
+        x.append(x_i)
 
-    y2 = x0 * w0 + x1 * w1
+st.text(f"x = {x}")
 
-    if st.button("Calcular la salida", key="b_tab2"):
-        st.write(f"La salida de la neurona es {y2}")
+# Sesgo
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Sesgo")
+    b = st.number_input("Introduce el valor del sesgo")
 
-with tab3:
-    col1, col2, col3 = st.columns(3)
+with col2:
+    st.subheader("Función de activación")
+    func_chosen = st.selectbox('Elige la función de activación', ('Sigmoide', 'ReLU', 'Tangente hiperbólica'))
 
-    with col1:
-        w0 = st.slider("Peso w0", 0.0, 5.0, 0.0, 0.01, key="w0_tab3")
-        x0 = st.number_input("Entrada x0", key="x0_tab3")
+# Mapeado a nombres definido en clase Neuron
+FUNCTIONS_NAME = {'Sigmoide': 'sigmoid', 'ReLU': 'relu', 'Tangente hiperbólica': 'tanh'}
 
-    with col2:
-        w1 = st.slider("Peso w1", 0.0, 5.0, 0.0, 0.01, key="w1_tab3")
-        x1 = st.number_input("Entrada x1", key="x1_tab3")  
-    
-    with col3:
-        w2 = st.slider("Peso w2", 0.0, 5.0, 0.0, 0.01, key="w2_tab3")
-        x2 = st.number_input("Entrada x2", key="x2_tab3") 
-
-    sesgo = st.number_input("Introduzca el valor del sesgo", key="sesgo")
-
-    y3 = (x0 * w0 + x1 * w1 + x2 * w2) + sesgo 
-
-    if st.button("Calcular la salida", key="b_tab3"):
-        st.write(f"La salida de la neurona es {y3}")
+# Salida
+if st.button("Calcular la salida"):
+    neurons_output = Neuron(weights=w, bias=b, func=FUNCTIONS_NAME[func_chosen])
+    st.text(f"La salida de la neurona es {neurons_output.run(input_data=x)}")
