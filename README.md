@@ -20,6 +20,7 @@ NEURONAPP-2/
 ├── docker-compose.yml       # Docker services configuration
 [cite_start]├── requirements.txt         # Python dependencies [cite: 2]
 └── streamlit_app.py         # Main application logic
+```
 
 ### Link:
 
