@@ -15,11 +15,11 @@ This application allows you to experiment with the fundamental building block of
 ```text
 NEURONAPP-2/
 ├── img/
-│   └── neurona.jpg          # Header image
-[cite_start]├── Dockerfile               # Docker build instructions [cite: 1]
-├── docker-compose.yml       # Docker services configuration
-[cite_start]├── requirements.txt         # Python dependencies [cite: 2]
-└── streamlit_app.py         # Main application logic
+│   └── neurona.jpg          
+├── Dockerfile               
+├── docker-compose.yml       
+├── requirements.txt         
+└── streamlit_app.py        
 ```
 
 ### Link:
